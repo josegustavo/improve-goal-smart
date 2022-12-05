@@ -104,8 +104,6 @@ export default function Home() {
               radius="5"
               color="black"
               ariaLabel="loading-indicator"
-              wrapperStyle
-              wrapperClass
             />
           </div>
         )}
