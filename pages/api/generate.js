@@ -15,7 +15,7 @@ export default async function (req, res) {
     frequency_penalty: 0,
     presence_penalty: 0,
   });
-  console.log([req.body.goalInput, req.body.seed, completion, completion.data.choices])
+  console.log([req.body.goalInput, req.body.seed, completion.data.choices, completion])
   res.status(200).json({ result: completion.data.choices[0].text });
 }
 
