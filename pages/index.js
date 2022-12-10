@@ -1,6 +1,23 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Circles } from "react-loader-spinner";
+
+const useAutosizeTextArea = (
+  textAreaRef,
+  value
+) => {
+  useEffect(() => {
+    if (textAreaRef) {
+      // We need to reset the height momentarily to get the correct scrollHeight for the textarea
+      textAreaRef.style.height = "0px";
+      const scrollHeight = textAreaRef.scrollHeight;
+
+      // We then set the height directly, outside of the render loop
+      // Trying to set this with state or a ref will product an incorrect value.
+      textAreaRef.style.height = scrollHeight + "px";
+    }
+  }, [textAreaRef, value]);
+};
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -8,6 +25,9 @@ export default function Home() {
   const [seed, setSeed] = useState(0.75);
 
   const [result, setResult] = useState();
+
+  const textAreaRef = useRef(null);
+  useAutosizeTextArea(textAreaRef.current, goalInput);
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -25,7 +45,7 @@ export default function Home() {
   }
 
   const handleKeyDown = (event) => {
-    if (!event.shiftKey && event.key === "Enter") {
+    if (!event.shiftKey && (event.key === "Enter" || event.keyCode === 13)) {
       event.preventDefault();
       onSubmit(event);
     }
@@ -64,16 +84,17 @@ export default function Home() {
           <form onSubmit={onSubmit}>
             <div className="flex max-w-xl p-1 mx-auto border border-black rounded-sm shadow focus-within:border-yellow">
               <textarea
-                maxLength={120}
+                maxLength={240}
                 rows={1}
                 autoComplete="off"
                 required="required"
                 placeholder="Escribe tu meta"
                 value={goalInput}
+                ref={textAreaRef}
                 onKeyDown={handleKeyDown}
                 disabled={loading}
                 onChange={(e) => setgoalInput(e.target.value)}
-                className="flex-1 p-3 bg-transparent outline-none font-display max-h-20"
+                className="flex-1 p-3 bg-transparent outline-none font-display max-h-60"
               />
               <button
                 type="submit"
